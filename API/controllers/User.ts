@@ -8,45 +8,46 @@ type UserWPurchases = Prisma.UserGetPayload<{
 
 export async function CreateUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     //Se valida que existe IP y luego se busca si existen datos de usuario(sin purchases) 
-    //Si encuentra un usuario envía 409 y error: 'Usuario ya registrado'   
-    //Si No encuentra usuario lo registra, envía 200 y result: user
-    //En caso de error envía 500 y error: "Error al crear el usuario"
     const userIP = req.ip;
     if (!userIP) return next(new Error("Error al obtener la ip del usuario"))
     const userData: User | null = await FindUserInfoByIP(userIP);
-    if (!userData && userIP) {
-        const prisma = new PrismaClient();
-        try {
-            const newUser: User = await prisma.user.create({
-                data: {
-                    ip: userIP,
-                }
-            })
-            res.status(200).json({result : newUser})
-        } catch (error) {
-            console.error(error);
-            next("Error al crear el usuario")
-        } finally {
-            prisma.$disconnect();
+    const prisma = new PrismaClient();
+    try {
+        //Si encuentra un usuario envía 409 y error: 'Usuario ya registrado'   
+        if (userData) {
+            res.status(409).json({ error: "Usuario ya registrado" })
+            return
         }
-    }else{
-        return next(new Error("Usuario ya registrado"))
+        //Registra nuevo usuario, envía 200 y result: user
+        const newUser: User = await prisma.user.create({
+            data: {
+                ip: userIP,
+            }
+        })
+        res.status(200).json({ result: newUser })
+    } catch (error) {
+        console.error(error);
+        next("Error al crear el usuario")
+    } finally {
+        prisma.$disconnect();
     }
-    
-    //res.status(409).json({error: 'Usuario ya registrado'})
+
 }
 
-export async function ReadUser(req: Request, res: Response, next: NextFunction): Promise<void>{
-    //Se valida que existe IP y luego se busca con esta los datos del usuario(con purchases) 
-    //Si encuentra un usuario envía 200 y result: {user + purchases[]}
-    //Si No encuentra usuario envía 404 y error: "Usuario no encontrado"
-    //En caso de error va a middleware "Error al crear el usuario"
+export async function ReadUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+        //Se valida que existe IP y luego se busca con esta los datos del usuario(con purchases) 
         const userIP = req.ip;
         const userData: UserWPurchases | null = await FindUserByIP(userIP);
-        if(!userData) return next(new Error("Usuario no encontrado"))  
-        res.status(200).json({result: userData})
+        //Si No encuentra usuario envía 404 y error: "Usuario no encontrado"
+        if (!userData) {
+            res.status(404).json({ error: 'Usuario no encontrado' })
+            return
+        }
+        //Si encuentra un usuario envía 200 y result: {user + purchases[]}
+        res.status(200).json({ result: userData })
     } catch (error) {
+        //En caso de error va a middleware "Error al crear el usuario"
         console.error(error);
         next(new Error("Error al buscar el usuario"))
     }

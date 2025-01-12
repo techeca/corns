@@ -7,32 +7,36 @@ interface customRequest extends Request {
 }
 
 export async function RateLimiter(req: customRequest, res: Response, next: NextFunction): Promise<void> {
-    //Se obtiene y valida IP, se busca y obtiene valores de usuario, y se incluye en req
-    //Busca última compra del usuario y revisa si diferencia en tiempo es menor a 0 seg   
-    //Si diferencia < 0 o no existen compras, continúa a la cración del purchase
-    //En caso contrario envía 429 Too Many Request
     const prisma = new PrismaClient()
-    try {   
-        const IP = req.ip 
+    try {
+        //Se obtiene y valida IP, se busca y obtiene valores de usuario, y se incluye en req, 404 si no encuentra usuario
+        const IP = req.ip
         const user = await FindUserByIP(IP)
-        if(!user) return next(new Error('Usuario no encontrado'))
+        if (!user) {
+            res.status(404).json({ error: "Usuario no encontrado" })
+            return
+        }
         req.user = user;
+        //Busca última compra del usuario y revisa diferencia en tiempo   
         const lastPurchase = await prisma.purchase.findFirst({
             where: { userId: user.id },
             orderBy: {
                 id: 'desc'
             }
         })
-   
+        
         if (lastPurchase) {
+            //En caso que diff > 0 envía 429 Too Many Request
             const lastPurchaseDate = lastPurchase.timeStamp.getTime()
             const actualDate = new Date().getTime()
             const diff = Number(((60 - (actualDate - lastPurchaseDate) / 1000)).toFixed())
-            if(diff < 0) return next()
-        }else{
-            return next()
+            if (diff > 0) {
+                res.status(429).json({ error: 'Too Many Request' })
+                return
+            }
         }
-        res.status(429).json({error: 'Too Many Request'})
+        //Si no existen compras, continúa a la cración del purchase (next())
+        return next()
     } catch (error) {
         console.error(error);
         next(new Error("Error al realizar rate limiter"))

@@ -1,20 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
-
-type TimerProviderState = {
-    time: number,
-    state: boolean
-    start: (time?: number) => void,
-    stop: () => void 
-}
-
-const initialState: TimerProviderState = {
-    time: 0,
-    state: false,
-    start: () => {},
-    stop: () => {}
-}
-
-export const TimerProviderContext = createContext<TimerProviderState>(initialState)
+import { useState, useEffect, useCallback } from "react";
+import { TimerContext } from "./TimerContext";
 
 type TimerProviderProps = {
     children: React.ReactNode
@@ -24,10 +9,10 @@ export function TimerProvider({ children }: TimerProviderProps) {
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [isRunning, setIsRunning] = useState<boolean>(false);
 
-    function startTimer(time?: number): void {
+    const startTimer = useCallback((time?: number): void => {
         setIsRunning(true)
         setTimeLeft(time ? time : 60)
-    }
+    }, [])
 
     function stopTimer(): void {
         setIsRunning(false)
@@ -59,9 +44,9 @@ export function TimerProvider({ children }: TimerProviderProps) {
     }
 
     return (
-        <TimerProviderContext.Provider value={value}>
+        <TimerContext.Provider value={value}>
             {children}
-        </TimerProviderContext.Provider>
+        </TimerContext.Provider>
     )
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getUserData, registerNewUser } from "@/lib/requests";
 import useTimerControl from "./useTimerControl";
 
@@ -12,10 +12,10 @@ export default function useUserData(): useUserDataSignature {
     const [totalCorns, setTotalCorns] = useState(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const { start } = useTimerControl()
-
+    const controller = new AbortController()
     //Si el usuario no existe lo registra
     //Si el usuario existe obtiene el total de purchaces (totalCorns)
-    async function checkIsRegistered() {
+    const checkIsRegistered = useCallback(async () => {
         try {
             const response = await getUserData()
             if (response.status === 404) {
@@ -34,7 +34,7 @@ export default function useUserData(): useUserDataSignature {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [start])
 
     function updateCorns() {
         setTotalCorns((prevCorns) => prevCorns + 1)
@@ -42,7 +42,9 @@ export default function useUserData(): useUserDataSignature {
 
     useEffect(() => {
         checkIsRegistered()
-    }, [])
+
+        return () => controller.abort()
+    }, [checkIsRegistered])
 
     return {
         updateCorns,

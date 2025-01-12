@@ -2,7 +2,7 @@ import { ResponseUserSignature } from '@/types/ResponseUserSignature'
 import { ResponseCornSignature } from '@/types/ResponseCornSignature'
 
 export async function getUserData(): Promise<ResponseUserSignature> {
-    const API_URL = 'http://localhost:3000'
+    const API_URL = import.meta.env.VITE_URL_API
     try {
         const response = await fetch(`${API_URL}/user/read`)
         const json = await response.json()
@@ -13,7 +13,7 @@ export async function getUserData(): Promise<ResponseUserSignature> {
 }
 
 export async function registerNewUser(): Promise<ResponseUserSignature> {
-    const API_URL = 'http://localhost:3000'
+    const API_URL = import.meta.env.VITE_URL_API
     try {
         const response = await fetch(`${API_URL}/user/create`, {
             method: `POST`
@@ -26,7 +26,7 @@ export async function registerNewUser(): Promise<ResponseUserSignature> {
 }
 
 export async function buyCorn(): Promise<ResponseCornSignature> {
-    const API_URL = 'http://localhost:3000'
+    const API_URL = import.meta.env.VITE_URL_API
     try {
         const response = await fetch(`${API_URL}/purchase/create`, { method: 'POST'})
         const json = await response.json()

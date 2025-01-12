@@ -10,7 +10,7 @@ export default function BuyCornCard({updateCorns, isLoading}: BuyCornCardProps):
   const { state, start } = useTimerControl()
 
   const handleBuyCorn = async () => {
-    let actualDate = new Date();
+    const actualDate = new Date();
     if (state) {
       toast('You must wait a little', {
         description: `Wait for the countdown to finish ⏰`,

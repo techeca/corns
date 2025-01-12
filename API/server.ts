@@ -55,5 +55,9 @@ export async function startServer() {
 
     app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
+        console.log(`New User:      ${"\x1b[32m"}[POST]${"\x1b[0m"} http://localhost:${PORT}/user/create`);
+        console.log(`Read User:     ${"\x1b[32m"}[GET]${"\x1b[0m"} http://localhost:${PORT}/user/read`);
+        console.log(`New Purchase:  ${"\x1b[32m"}[POST]${"\x1b[0m"} http://localhost:${PORT}/purchase/create`);
+        console.log(`Purchase list of an User: ${"\x1b[32m"}[GET]${"\x1b[0m"} http://localhost:${PORT}/purchase/read`);
     })
 }

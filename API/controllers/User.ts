@@ -24,6 +24,7 @@ export async function CreateUser(req: Request, res: Response, next: NextFunction
             })
             res.status(200).json({result : newUser})
         } catch (error) {
+            console.error(error);
             next("Error al crear el usuario")
         } finally {
             prisma.$disconnect();
@@ -46,6 +47,7 @@ export async function ReadUser(req: Request, res: Response, next: NextFunction):
         if(!userData) return next(new Error("Usuario no encontrado"))  
         res.status(200).json({result: userData})
     } catch (error) {
+        console.error(error);
         next(new Error("Error al buscar el usuario"))
     }
 }

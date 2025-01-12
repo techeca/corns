@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Purchase, User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { Response, Request, NextFunction } from "express";
 import { FindUserByIP } from "../utils/DBHelpers";
 
@@ -23,6 +23,7 @@ export async function CreatePurchase(req: customRequest, res: Response, next: Ne
         })
         res.status(200).json({ result: newPurchase });
     } catch (error) {
+        console.error(error);
         next(new Error("Error al intentar generar un Purchase"))
     } finally {
         await prisma.$disconnect()
@@ -46,6 +47,7 @@ export async function ReadPurchase(req: customRequest, res: Response, next: Next
         })
         res.status(200).json({ result: purchaseList })
     } catch (error) {
+        console.error(error);
         next(new Error("Error al obtener lista de purchases"))
     } finally {
         await prisma.$disconnect()

@@ -1,4 +1,4 @@
-import { PrismaClient, Purchase, User } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { FindUserByIP } from "../utils/DBHelpers";
 import { NextFunction, Request, Response } from "express";
 
@@ -34,6 +34,7 @@ export async function RateLimiter(req: customRequest, res: Response, next: NextF
         }
         res.status(429).json({error: 'Too Many Request'})
     } catch (error) {
+        console.error(error);
         next(new Error("Error al realizar rate limiter"))
     } finally {
         await prisma.$disconnect();

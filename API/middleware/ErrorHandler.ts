@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 
-export default function ErrorHandler(err: Error, req: Request, res: Response, next: NextFunction){   
+export default function ErrorHandler(err: Error, req: Request, res: Response){   
     if(err.message === 'Too Many Request'){
         res.status(429).json(err.message)
     } else if(err.message === 'Usuario no encontrado'){

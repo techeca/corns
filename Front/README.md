@@ -1,50 +1,56 @@
-# React + TypeScript + Vite
+# Bob's corn - Front
+Frontend de ejercicio con rate limiter separando Front y API en dos proyectos diferentes.  
+`API` con la creación de usuario y compras -> [Ir](https://github.com/techeca/corns/tree/master/API)  
+`Front` para interfaz de compra.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Instalación
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Clonar repositorio
+```bash
+git clone https://github.com/techeca/corns
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Abrir terminal en la raíz del repositorio clonado
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+Mover a carpeta `Front` e instalar dependencias
+```bash
+cd Front
+npm i
 ```
+
+## Configuración de API en Front
+Para establecer las solicitudes desde el `Front` a la `API` siga los siguientes pasos:
+
+Crear archivo `.env` en la carpeta Front
+```bash
+VITE_URL_API=http://localhost:3000
+```
+
+Ahora puede iniciar el Front
+```bash
+npm run dev
+```
+
+## Componentes
+Son 3 componenetes principales los que conforman la aplicación y en `ui` puedes encontrar los componentes de `shadcn`.
+
+`BuyCornCard`: Contiene button que envía la solicitud de compra de un `corn`.  
+`CountDown`: Componente para ver la cuenta regresiva.  
+`StatsCard`: Componente con total de `corn` comprados por el usuario.
+
+## Hooks, Context & Providers
+Los que pertenecen a la aplicación son `useUserData` y `useTimerControl`.  
+
+### Hooks
+`useUserData`: Retorna `updateCorns` para incrementar la cantidad de corns +1, `corns` para saber total y `isLoading` para saber que terminó de realizar cada fetch.  
+`useTimerControl`: Hook para context `TimerContext`.
+
+### Context & Providers
+`TimerContext`: Retorna `time` que representa el tiempo restante para una proxima compra, `state` para saber si está o no corriendo, `start` para iniciar la cuenta regresiva, `stop` para detener la cuenta regresiva.
+
+## Requests
+En `./Front/src/lib/requests.ts` puede encontrar las solicitudes fetch realizadas a la `API`.
+
+`getUserData`: Obtiene la informacion del usuario y sus purchases.  
+`registerNewUser`: Registra al usuario si es que no existe.  
+`buyCorn`: Solicitar la compra de un `corn`

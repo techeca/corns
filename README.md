@@ -1,8 +1,8 @@
 
-# Bob's corn - API
-API de ejercicio con rate limiter separando Front y API en dos proyectos diferentes.  
+# Bob's corn
+Ejercicio de rate limiter separando Front y API en dos proyectos diferentes.  
 `API` con la creación de usuario y compras.  
-`Front` para interfaz de compra -> [Ir](https://github.com/techeca/corns/tree/master/Front)  
+`Front` para interfaz de compra.
 
 # Instalación
 
@@ -16,6 +16,12 @@ Abrir terminal en la raíz del repositorio clonado
 Mover a carpeta `API` e instalar dependencias
 ```bash
 cd API
+npm i
+```
+
+Mover a carpeta `Front` e instalar dependencias
+```bash
+cd Front
 npm i
 ```
 
@@ -44,84 +50,15 @@ Ahora puede iniciar la API
 ```bash
 npm run dev
 ```
+## Configuración de API en Front
+Para establecer las solicitudes desde el `Front` a la `API` siga los siguientes pasos:
 
-## Controllers
-Los controllers de la Api son los siguientes:
-
-`Purchase`: Contiene `create` y `read`/`list`.  
-`User`: Contiene `create` y `read`.  
-
-## Middlewares
-Principalmente contiene el middleware encargado de realizar rate limiter al endpoint `/purchase/create`.  
-
-`rateLimiter.ts`
-
-## Endpoints
-Los endpoint funcionando son los siguientes:
-
-[POST]  `URL.../purchase/create`  
-Example `Status 200`:
-```json
-{
-    "result": {
-        "id": 30,
-        "userId": 1,
-        "timeStamp": "2025-01-12T03:37:58.889Z"
-    }
-}
+Crear archivo `.env` en la carpeta Front
+```bash
+VITE_URL_API=http://localhost:3000
 ```
 
-[GET]   `URL.../purchase/list`  
-Example `Status 200`:
-```json
-{
-    "result": [
-        {
-            "id": 1,
-            "userId": 1,
-            "timeStamp": "2025-01-11T22:04:58.002Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "timeStamp": "2025-01-11T22:19:57.276Z"
-        }
-    ]
-}
-```
-
-[POST]  `URL.../user/create`  
-Example `Status 200`:  
-```json
-{
-    "result": {
-        "id": 1,
-        "ip": "::1",
-        "corns": 0
-    }
-}
-```
-
-[GET]   `URL.../user/read`  
-Example `Status 200`:  
-```json
-{
-    "result": {
-        "id": 1,
-        "ip": "::1",
-        "corns": 0,
-        "purchases": [
-            {
-                "id": 1,
-                "userId": 1,
-                "timeStamp": "2025-01-11T22:04:58.002Z"
-            },
-            {
-                "id": 2,
-                "userId": 1,
-                "timeStamp": "2025-01-11T22:19:57.276Z"
-            }
-        ]
-    }
-}
+Ahora puede iniciar el Front
+```bash
+npm run dev
 ```

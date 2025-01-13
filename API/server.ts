@@ -51,7 +51,7 @@ export async function startServer() {
     setupRoutes();
 
     //Middleware para manejo de errores
-    app.use(ErrorHandler);
+   // app.use(ErrorHandler);
 
     app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
